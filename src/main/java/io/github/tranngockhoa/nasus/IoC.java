@@ -32,6 +32,28 @@ public class IoC implements BeanContainer {
         return ioC;
     }
 
+    @Override
+    public void putBean(Class<?> clazz, Object instance) {
+        beanContainer.putBean(clazz, instance);
+    }
+
+    /**
+     * Get bean by Class
+     *
+     * @param clazz
+     * @param <T>
+     * @return
+     */
+    @Override
+    public <T> T getBean(Class<T> clazz) {
+        return beanContainer.getBean(clazz);
+    }
+
+    @Override
+    public <T> boolean containsBean(Class<T> clazz) {
+        return false;
+    }
+
     private void doInitBeans(Class<?> mainClass) {
         this.iniBeansFromMainClass(mainClass);
     }
@@ -173,27 +195,4 @@ public class IoC implements BeanContainer {
                     + ". Can't define which one need to be chosen to be init.");
         }
     }
-
-    @Override
-    public void putBean(Class<?> clazz, Object instance) {
-        beanContainer.putBean(clazz, instance);
-    }
-
-    /**
-     * Get bean by Class
-     *
-     * @param clazz
-     * @param <T>
-     * @return
-     */
-    @Override
-    public <T> T getBean(Class<T> clazz) {
-        return beanContainer.getBean(clazz);
-    }
-
-    @Override
-    public <T> boolean containsBean(Class<T> clazz) {
-        return false;
-    }
-
 }
