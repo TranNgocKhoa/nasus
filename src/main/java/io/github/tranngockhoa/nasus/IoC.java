@@ -64,8 +64,10 @@ public class IoC implements BeanContainer {
             Class<?> configurationClass = configurationClassQueue.removeFirst();
             try {
                 this.tryInitBeanConfigurationClass(configurationClass);
-            } catch (Exception e) {
+            } catch (IoCException e) {
                 configurationClassQueue.addLast(configurationClass);
+            } catch (InvocationTargetException | IllegalAccessException e) {
+                throw new RuntimeException(e);
             }
         }
     }
