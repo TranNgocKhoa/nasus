@@ -46,8 +46,8 @@ public class IoC implements BeanContainer {
 
         // get classes in package name
         List<Class<?>> classesInPackage = NasusClassLoader.getInstance().getClassesInPackage(packageName);
-        // init implementation container by @Component and @Bean in @Configuration classes
-        ImplementationRegister.getInstance()
+        // init implementation container by @Bean in @Configuration classes
+        ConfigurationClassImplementationRegister.getInstance()
                 .register(classesInPackage, implementationContainer);
         // init beans in @Configuration classes
         this.initConfigurationDeclaredBeans(classesInPackage);
