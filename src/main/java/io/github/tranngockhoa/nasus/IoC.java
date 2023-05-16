@@ -17,11 +17,13 @@ import java.util.Deque;
 import java.util.List;
 
 public class IoC implements BeanContainer {
+    private static BeanContainer CONTEXT;
     private final BeanContainer beanContainer = new BeanContainerImpl();
     private final ImplementationContainer implementationContainer = new ImplementationContainerImpl();
 
     public static IoC initBeans(Class<?> mainClass) {
         IoC ioC = new IoC();
+        CONTEXT = ioC.beanContainer;
         long start = System.currentTimeMillis();
         ioC.doInitBeans(mainClass);
         long end = System.currentTimeMillis();
@@ -30,6 +32,10 @@ public class IoC implements BeanContainer {
         System.out.println("Size: " + ((BeanContainerImpl) ioC.beanContainer).size() + " instances");
 
         return ioC;
+    }
+
+    public static BeanContainer context() {
+        return CONTEXT;
     }
 
     @Override
