@@ -65,6 +65,7 @@ public class IoC implements BeanContainer {
     }
 
     private void iniBeansFromMainClass(Class<?> mainClass) {
+        System.out.println("Init from Main Class " + mainClass.getName());
         this.initBeansInPackage(mainClass.getPackage().getName());
     }
 
@@ -89,8 +90,9 @@ public class IoC implements BeanContainer {
 
         while (!configurationClassQueue.isEmpty()) {
             // Create configuration object. Considered as a Component
-            Class<?> configurationClass = configurationClassQueue.removeFirst();
+            Class<?> configurationClass = configurationClassQueue.poll();
             try {
+                System.out.println("Init from config class " + configurationClass.getName());
                 this.tryInitBeanConfigurationClass(configurationClass);
             } catch (IoCException e) {
                 configurationClassQueue.addLast(configurationClass);
@@ -101,6 +103,7 @@ public class IoC implements BeanContainer {
     }
 
     private void tryInitBeanConfigurationClass(Class<?> configurationClass) throws IllegalAccessException, InvocationTargetException {
+        System.out.println("Init " + configurationClass.getName());
         _initBean(configurationClass);
 
         // Init fields in Configuration object
@@ -114,14 +117,17 @@ public class IoC implements BeanContainer {
         int totalMethods = beanMethodQueue.size();
         int count = 0;
         while (!beanMethodQueue.isEmpty()) {
-            Method beanMethod = beanMethodQueue.removeFirst();
+            Method beanMethod = beanMethodQueue.poll();
             try {
+                System.out.println("Init method " + beanMethod.getName());
                 this._initBeanMethod(configurationObject, beanMethod);
             } catch (InitBeanMethodException e) {
+                System.err.println("Error " + e.getMessage());
                 count++;
                 beanMethodQueue.addLast(beanMethod);
 
                 if (count > totalMethods) {
+                    System.err.println("Error: Can't init some @Bean method at the moment.");
                     throw new IoCException("Can't init some @Bean method at the moment.");
                 }
             }
@@ -141,7 +147,10 @@ public class IoC implements BeanContainer {
             beanContainer.putBean(beanType, beanInstance);
         } else {
             for (Parameter parameter : parameters) {
-                this._initBean(parameter.getType());
+                if (!beanContainer.containsBean(parameter.getType())) {
+                    throw new InitBeanMethodException("No beanMethod found for " + parameter.getName());
+                }
+//                this._initBean(parameter.getType());
             }
             Object[] parameterObjects = Arrays.stream(parameters)
                     .map(Parameter::getType)
