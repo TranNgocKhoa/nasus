@@ -7,6 +7,10 @@ public class Connector {
         this.wire = wire;
     }
 
+    public Connector(Wire wire, Adapter adapter) {
+        this.wire = wire;
+    }
+
     public void check() {
         System.out.println("Connector: ");
         System.out.println("Wire: " + wire);
